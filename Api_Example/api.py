@@ -41,8 +41,10 @@ def token_required(f):
     def decorated(*args, **kwargs):
         token = None
 
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
+        # if 'x-access-token' in request.headers:
+        #     token = request.headers['x-access-token']
+
+        token = request.cookies.get('CurrentUser')
 
         if not token:
             return jsonify({'message': 'Token is missing!'}), 401
@@ -129,7 +131,12 @@ def login():
     
     if check_password_hash(user.password, auth.password):
         token = jwt.encode({'public_id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=500)}, app.config['SECRET_KEY'])
-        return jsonify({'token': token})
+        response = make_response(token)
+        response.set_cookie(
+            "CurrentUser", token, secure=app.config.get("SECURE_COOKIE")
+        )
+        return response
+        # return jsonify({'token': token})
     return make_response('could not verify', 401, {'WWW-Authentcate': 'Basic realm="Password required!"'})
 
 @app.route('/todo', methods=['GET', 'POST'])
