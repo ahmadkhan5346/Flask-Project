@@ -21,7 +21,7 @@ class PersonalDeail(db.Model):
     father_name = db.Column(db.String(50), nullable=False)
     mother_name = db.Column(db.String(50), nullable=False)
     location = db.Column(db.String(50), nullable=False)
-    emp_id = db.Column('employee_id', db.Integer, db.ForeignKey('employee.id', ondelete='CASCADE'), nullable=False)
+    emp_id = db.Column('employee_id', db.Integer, db.ForeignKey('employee.id', ondelete='CASCADE'), nullable=False, unique=True)
 
 
 @app.route('/create-database',methods=['GET'])
